@@ -195,11 +195,43 @@ export const loadState = (data: string): void => {
 let renderCount = 0;
 
 export const updateCodeStore = (newState: Partial<State>): void => {
+  const mergedState = { ...get(inputStateStore), ...newState, renderCount };
+  renderCount++;
+
+  inputStateStore.set(mergedState);
+
+  if (mergedState.code && newState) {
+    const url = `http://localhost:3001/api/diagram`;
+
+    void (async () => {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain',
+            Accept: 'text/plain'
+          },
+          body: mergedState.code
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        console.info('[Mermaid] Diagramm gespeichert');
+      } catch (error) {
+        console.warn('[Mermaid] Fehler beim Speichern:', error);
+      }
+    })();
+  }
+
+  console.log('After Updating Code Store');
+};
+/*export const updateCodeStore = (newState: Partial<State>): void => {
   inputStateStore.update((state) => {
     renderCount++;
     return { ...state, ...newState, renderCount };
   });
-};
+};*/
 
 export const updateCode = (
   code: string,
