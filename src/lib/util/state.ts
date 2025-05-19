@@ -193,6 +193,7 @@ export const loadState = (data: string): void => {
 };
 
 let renderCount = 0;
+
 export const updateCodeStore = (newState: Partial<State>): void => {
   inputStateStore.update((state) => {
     renderCount++;

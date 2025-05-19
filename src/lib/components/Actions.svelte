@@ -10,7 +10,7 @@
   import { env } from '$/util/env';
   import { browser } from '$app/environment';
   import { waitForRender } from '$lib/util/autoSync';
-  import { inputStateStore, stateStore, urlsStore } from '$lib/util/state';
+  import { inputStateStore, stateStore, urlsStore, updateCodeStore } from '$lib/util/state';
   import { logEvent } from '$lib/util/stats';
   import { version as FAVersion } from '@fortawesome/fontawesome-free/package.json';
   import dayjs from 'dayjs';
@@ -247,6 +247,9 @@ ${svgString}`);
     {#if isClipboardAvailable()}
       <CopyButton onclick={onCopyClipboard} label="Copy Image" />
     {/if}
+    <!--Add custom Save Button-->
+    <Button onclick={updateCodeStore}><DownloadIcon /> Save Diagram</Button>
+
     {#if $urlsStore.mdCode}
       <CopyInput value={$urlsStore.mdCode} label="Copy Markdown" testID={TID.copyMarkdown} />
     {/if}

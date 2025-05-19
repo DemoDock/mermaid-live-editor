@@ -1,12 +1,38 @@
-import type { Loader, State } from '$lib/types';
+import type { State } from '$lib/types';
 import { defaultState, updateCodeStore } from '$lib/util/state';
-import { fetchText } from '$lib/util/util';
-import { loadGistData } from './gist';
 
-const loaders: Record<string, Loader> = {
-  gist: loadGistData
+export const loadDataFromUrl = async (): Promise<void> => {
+  const state: Partial<State> = defaultState;
+
+  const url = 'http://localhost:3001/api/diagram';
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'text/plain',
+        Accept: 'text/plain'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Diagramm konnte nicht geladen werden (Status: ${response.status})`);
+    }
+
+    const diagram = await response.text();
+    state.code = diagram;
+
+    updateCodeStore({
+      ...state,
+      updateDiagram: true
+    });
+    console.info('[Mermaid] Diagramm erfolgreich geladen');
+  } catch (error) {
+    console.error('[Mermaid] Fehler beim Laden des Diagramms:', error);
+  }
 };
 
+/*
 export const loadDataFromUrl = async (): Promise<void> => {
   const searchParams = new URLSearchParams(window.location.search);
   let state: Partial<State> = defaultState;
@@ -55,3 +81,4 @@ export const loadDataFromUrl = async (): Promise<void> => {
       updateDiagram: true
     });
 };
+*/
